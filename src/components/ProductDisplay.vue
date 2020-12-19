@@ -33,34 +33,17 @@
     <review-list v-if="reviews.length" :reviews="reviews"></review-list>
     <review-form @review-submitted="addReview"></review-form>
   </div>
-  >
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, computed, SetupContext } from "vue";
 import ReviewList from "./ReviewList.vue";
 import ReviewForm from "./ReviewForm.vue";
-
-export type VariantType = {
-  id: number;
-  color: string;
-  image: string;
-  quantity: number;
-};
 
 export type ReviewType = {
   name: string;
   review: string;
   rating: number | null;
-};
-
-export type DataType = {
-  product: string;
-  brand: string;
-  selectedVariant: number;
-  details: string[];
-  variants: VariantType[];
-  reviews: ReviewType[];
 };
 
 export default defineComponent({
@@ -76,56 +59,60 @@ export default defineComponent({
     }
   },
   emits: ["add-to-cart"],
-  data(): DataType {
-    return {
-      product: "Socks",
-      brand: "Vue Mastery",
-      selectedVariant: 0,
-      details: ["50% cotton", "30% wool", "20% polyester"],
-      variants: [
-        {
-          id: 2234,
-          color: "green",
-          image: require("@/assets/images/socks_green.jpg"),
-          quantity: 50
-        },
-        {
-          id: 2235,
-          color: "blue",
-          image: require("../assets/images/socks_blue.jpg"),
-          quantity: 0
-        }
-      ],
-      reviews: []
-    };
-  },
-  methods: {
-    addToCart() {
-      this.$emit("add-to-cart", this.variants[this.selectedVariant].id);
-    },
-    updateVariant(index: number) {
-      this.selectedVariant = index;
-    },
-    addReview(review: ReviewType) {
-      this.reviews.push(review);
-    }
-  },
-  computed: {
-    title(): string {
-      return this.brand + " " + this.product;
-    },
-    image(): string {
-      return this.variants[this.selectedVariant].image;
-    },
-    inStock(): number {
-      return this.variants[this.selectedVariant].quantity;
-    },
-    shipping(): string | number {
-      if (this.premium) {
+  setup(props, context: SetupContext) {
+    const product = "Socks";
+    const brand = "Vue Mastery";
+    const selectedVariant = ref(0);
+    const details = ["50% cotton", "30% wool", "20% polyester"];
+    const variants = [
+      {
+        id: 2234,
+        color: "green",
+        image: require("@/assets/images/socks_green.jpg"),
+        quantity: 50
+      },
+      {
+        id: 2235,
+        color: "blue",
+        image: require("@/assets/images/socks_blue.jpg"),
+        quantity: 0
+      }
+    ];
+    const reviews = ref<ReviewType[]>([]);
+
+    const title = computed(() => `${brand} ${product}`);
+    const image = computed(() => variants[selectedVariant.value].image);
+    const inStock = computed(() => variants[selectedVariant.value].quantity);
+    const shipping = computed(() => {
+      if (props.premium) {
         return "Free";
       }
       return 2.99;
-    }
+    });
+
+    const addToCart = () =>
+      context.emit("add-to-cart", variants[selectedVariant.value].id);
+    const updateVariant = (index: number) => (selectedVariant.value = index);
+    const addReview = (review: ReviewType) => reviews.value.push(review);
+
+    return {
+      // data
+      product,
+      brand,
+      selectedVariant,
+      details,
+      variants,
+      reviews,
+      // computed
+      title,
+      image,
+      inStock,
+      shipping,
+      // methods
+      addToCart,
+      updateVariant,
+      addReview
+    };
   }
 });
 </script>

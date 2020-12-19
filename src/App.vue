@@ -8,29 +8,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import ProductDisplay from "./components/ProductDisplay.vue";
-
-export type DataType = {
-  premium: boolean;
-  cart: number[];
-};
 
 export default defineComponent({
   name: "App",
   components: {
     ProductDisplay
   },
-  data(): DataType {
+  setup() {
+    const premium = true;
+    const cart = ref<number[]>([]);
+
+    const updateCart = (id: number) => cart.value.push(id);
+
     return {
-      premium: true,
-      cart: []
+      premium,
+      cart,
+      updateCart
     };
-  },
-  methods: {
-    updateCart(id: number) {
-      this.cart.push(id);
-    }
   }
 });
 </script>

@@ -23,51 +23,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-
-export type DataType = {
-  name: string;
-  review: string;
-  rating: number | null;
-  recommend: string | null;
-};
+import { defineComponent, ref, SetupContext } from "vue";
 
 export default defineComponent({
   name: "ReviewForm",
   emits: ["review-submitted"],
-  data(): DataType {
-    return {
-      name: "",
-      review: "",
-      rating: null,
-      recommend: null
-    };
-  },
-  methods: {
-    onSubmit() {
+  setup(_, context: SetupContext) {
+    const name = ref("");
+    const review = ref("");
+    const rating = ref<number | null>(null);
+    const recommend = ref<string | null>(null);
+
+    const onSubmit = () => {
       if (
-        this.name === "" ||
-        this.review === "" ||
-        this.rating === null ||
-        this.recommend === null
+        name.value === "" ||
+        review.value === "" ||
+        rating.value === null ||
+        recommend.value === null
       ) {
         alert("Review is incomplete. Please fill out every field.");
         return;
       }
 
       const productReview = {
-        name: this.name,
-        review: this.review,
-        rating: this.rating,
-        recommend: this.recommend
+        name: name.value,
+        review: review.value,
+        rating: rating.value,
+        recommend: recommend.value
       };
-      this.$emit("review-submitted", productReview);
+      context.emit("review-submitted", productReview);
 
-      this.name = "";
-      this.review = "";
-      this.rating = null;
-      this.recommend = null;
-    }
+      name.value = "";
+      review.value = "";
+      rating.value = null;
+      recommend.value = null;
+    };
+
+    return {
+      name,
+      review,
+      rating,
+      recommend,
+      onSubmit
+    };
   }
 });
 </script>
