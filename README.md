@@ -1,24 +1,3 @@
 # intro-to-vue-3-ts
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Recomposed [Intro-to-Vue-3](https://github.com/Code-Pop/Intro-to-Vue-3) using TypeScript and Composition API.
